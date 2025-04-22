@@ -1,5 +1,4 @@
 ---
-
 # Lightweight RL-style Fine-tuning for Language Models in Resource-Constrained Settings
 
 This project presents a custom, lightweight implementation of RL-style fine-tuning for language models, built entirely from scratch with **minimal computing resources and no access to human feedback datasets or APIs**.
@@ -7,7 +6,6 @@ This project presents a custom, lightweight implementation of RL-style fine-tuni
 The goal was not to outperform existing RLHF pipelines, but to **explore how much of reinforcement learning-inspired tuning can be replicated under extreme constraints**. The resulting framework includes custom generation logic, an approximate reward modeling system, and a PPO-style training loop — all running in a single notebook file.
 
 > **Disclaimer**: The actual output quality is **not competitive with real RLHF pipelines**. This project was a **creative and educational effort** rather than a production-level system.
-
 ---
 
 ## Key Contributions and Novel Techniques
@@ -97,9 +95,6 @@ Although it led to **repetitive and formulaic outputs**, it showed potential for
 - `generate()`: Custom sampling loop with PCA compression  
 - `ppo_loop`: Manual PPO with actor-critic and GAE  
 - `gradio_demo`: Text input/output interface (optional)
-
----
-
 ---
 
 # リソース制限下での軽量RL風言語モデル微調整
