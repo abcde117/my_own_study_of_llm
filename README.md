@@ -71,9 +71,18 @@ All gradients are propagated and updated manually. There is **no external PPO or
 
 ### 4. (Experimental) Use of FFT for Positional Encoding / Representation Mixing
 
-Earlier in the project (not shown in this README), **FFT was used to replace traditional positional encoding**, inspired by the DFT mechanism. This was an **experimental design** for learning representations in a frequency domain rather than a spatial one.
+Earlier in the project (not shown in this README), FFT was used to replace traditional positional encoding, inspired by the DFT mechanism. This was an experimental design for learning representations in a frequency domain rather than a spatial one.
 
-Although it led to **repetitive and formulaic outputs**, it showed potential for image-convolution-like aggregation, and remains an open idea for future refinement.
+Contrary to initial assumptions, the FFT-based positional encoding did not lead to repetitive outputs. In fact, compared to standard positional encodings (as in LLaMA), which occasionally collapsed into degenerate patterns such as "nine nine nine ...", the FFT-based model showed greater robustness. Notably, it was able to generate novel tokens not present in the original vocabulary — a behavior suggesting interpolation or synthesis in token space.
+
+This indicates the potential of frequency-domain modeling for:
+
+- Reducing repetition in autoregressive generation,
+- Enabling creative synthesis beyond training data,
+- Supporting better generalization in low-resource or compressed settings.
+
+**Takeaway:** FFT-based positional modeling may offer advantages in generative diversity and compact expressiveness — even for pure text tasks — and opens the door to novel use cases such as encryption or semantic token remapping.
+
 
 > **Takeaway**: FFT-based positional modeling might better suit multimodal or structured data than pure text generation.
 
@@ -81,13 +90,17 @@ Although it led to **repetitive and formulaic outputs**, it showed potential for
 
 ## Limitations
 
-- The quality of generated text is limited and often repetitive or semantically weak.
-- The reward model is a crude proxy and doesn’t reflect real human preferences.
-- PCA projection causes loss of precision during generation.
-- Sentence-level rewards do not align well with token-level training signals.
-- FFT-based position encoding (if used) performs worse than RoPE or learned embeddings.
+The quality of generated text is limited and often repetitive or semantically weak.
 
-> This project is a **proof of concept** on what can be done with only a model, a tokenizer, and open-source tools — not a production-ready system.
+The reward model is a crude proxy and doesn’t reflect real human preferences.
+
+PCA projection causes loss of precision during generation.
+
+Sentence-level rewards do not align well with token-level training signals.
+
+FFT-based position encoding (if used) performs worse than RoPE or learned embeddings in terms of stability and control in large-scale generation.
+
+This project is a proof of concept on what can be done with only a model, a tokenizer, and open-source tools — not a production-ready system.
 
 ---
 
@@ -168,18 +181,29 @@ loss = -torch.min(surr1, surr2) - beta_entropy * entropy
 
 プロジェクトの初期には、LLaMAやBERTに触発され、従来の位置エンコーディングを**FFT（高速フーリエ変換）で置き換える試み**も行いました。
 
-この手法は**繰り返し的・パターン的な出力**になりやすかったですが、畳み込み的な特徴抽出や画像向け情報集約には向いている可能性があると考えられます。
+当初の予想とは異なり、FFTベースの位置エンコーディングは繰り返し的な出力に陥らず、むしろ標準的な位置埋め込み（例：LLaMA）のように「nine nine nine...」といった退化したパターンを生み出すことが少なく、より頑健な動作を見せました。さらに、**語彙に存在しないトークンを合成・生成する挙動**も観察され、トークンスペース上での補間的・合成的な能力が示唆されます。
 
-> **補足**：自然言語生成には不向きでしたが、他モダリティでは再検討の余地があります。
+このことから、周波数領域に基づくモデリングには以下のような可能性があると考えられます：
+
+- 自回帰生成における繰り返しの抑制
+- 学習データ外の創発的表現の合成
+- 圧縮・低資源状況下での汎化性能向上
+
+**まとめ：** FFTベースの位置表現は、自然言語でも多様性やコンパクトな表現力に利点を持ち、暗号化や意味的トークン変換といった新たな応用への道も拓く可能性があります。
+
 
 ---
 
 ## 限界・注意点
 
-- 出力文の品質は不十分で、意味的に弱く反復的な傾向があります
-- 報酬関数はあくまで近似であり、トークン単位の精度が高くありません
-- PCAによるlogits圧縮は精度低下を引き起こします
-- FFT位置埋め込みはRoPE等に劣る結果となりました
+- 出力文の品質は不十分で、意味的に弱く反復的な傾向があります  
+- 報酬関数はあくまで近似であり、トークン単位の精度が高くありません  
+- PCAによるlogits圧縮は精度低下を引き起こします  
+- 文単位のスコアはトークン単位の訓練信号と整合しません  
+- FFTベースの位置埋め込みは、RoPEや学習型埋め込みと比べて、大規模生成における安定性や制御性に劣る傾向があります  
+
+このプロジェクトは、モデル・トークナイザ・オープンソースツールだけで何ができるかを示す**概念実証**であり、本番運用を想定したものではありません。
+
 
 ---
 
